@@ -1,0 +1,135 @@
+create table producto(
+	id varchar (50),
+	nombre varchar (50),
+	categoria varchar (50),
+	precio integer,
+	stock integer,
+	primary key (id)
+	);
+select * from cliente;
+create table cliente(
+	id varchar (50),
+	nombre varchar (50),
+	correo varchar (50),
+	telefono varchar (50),
+	fecha Date,
+	primary key (id)
+);
+
+create table ventas(
+	id varchar (50),
+	idcliente_fk varchar (50),
+	fechaventa date,
+	total integer,
+	primary key (id),
+	constraint fk_idcliente foreign key(idcliente_fk) references cliente(id)
+);
+
+create table detalle_venta(
+	id varchar (50),
+	idventa_fk varchar (50),
+	idproducto varchar (50),
+	cantidad integer, 
+	subtotal integer,
+	constraint fk_venta foreign key(idventa_fk) references ventas(id),
+	constraint fk_producto foreign key(idproducto) references producto(id)
+);
+
+------------------------------------------DDL-------------------------------------------------
+alter table ventas rename to venta; 
+
+
+alter table venta rename column idcliente_fk to id_cliente;
+alter table venta rename column fechaventa to fecha_venta;
+
+alter table detalle_venta rename column idventa_fk to id_venta;
+alter table detalle_venta rename column idproducto to id_producto;
+
+alter table cliente drop column fecha;
+
+alter table producto add column descripcion varchar (50);
+
+---------------------------------------DML-----------------------------------------------------
+
+insert into producto(id, nombre, categoria, precio, stock)
+values('001', 'FIFA 26', 'videojuego','170000', '50');
+insert into producto(id, nombre, categoria, precio, stock, descripcion)
+values('002', 'UFC 5', 'videojuego', '200000', '50', 'Deporte de contacto');
+insert into producto(id, nombre, categoria, precio, stock, descripcion)
+values('003', 'Warzone', 'videojuego', '0', '50', 'RPG');
+
+insert into cliente(id, nombre, correo, telefono)
+values('004', 'Raul', 'Raul@gmail.com', '3103632767');
+insert into cliente(id, nombre, correo, telefono)
+values('005', 'Maria', 'Maria@gmail.com', '3125467809');
+insert into cliente(id, nombre, correo, telefono)
+values('006', 'Josefina', 'Josefina@gmail.com', '3148765409');
+
+insert into venta(id, id_cliente, fecha_venta, total)
+values('007', '004', current_date, '170000');
+insert into venta(id, id_cliente, fecha_venta, total)
+values('008', '005', current_date, '200000');
+insert into venta(id, id_cliente, fecha_venta, total)
+values('009', '006', current_date, '0');
+
+insert into detalle_venta(id, id_venta, id_producto, cantidad, subtotal)
+values('010', '007', '001', '1', '170000');
+insert into detalle_venta(id, id_venta, id_producto, cantidad, subtotal)
+values('011', '008', '002', '1', '200000');
+insert into detalle_venta(id, id_venta, id_producto, cantidad, subtotal)
+values('012', '009', '003', '1', '0');
+
+update producto
+set precio = '180000', descripcion = 'Videojuego de Futbol'
+where id = '001';
+
+update cliente 
+set nombre = 'Raul David'
+where id = '004';
+
+update venta
+set total = '178000'
+where id = '007';
+
+update detalle_venta
+set cantidad = '2'
+where id = '010';
+
+select * from venta;
+
+select * from producto
+where id = '001';
+
+delete from detalle_venta 
+where id_venta = '009';
+
+delete from venta 
+where id = '009';
+
+delete from cliente 
+where id = '006';
+
+select * from cliente;
+
+--------------------------------------------------vista------------------------------------------
+CREATE VIEW vista_detalle_venta AS
+SELECT 
+    v.id AS id_venta,
+    c.nombre AS nombre_cliente,
+    c.correo,
+    v.fecha_venta,
+    p.nombre AS nombre_producto,
+    p.categoria,
+    p.descripcion,
+    d.cantidad,
+    p.precio,
+    d.subtotal,
+    v.total
+FROM venta v
+JOIN cliente c ON v.id_cliente = c.id
+JOIN detalle_venta d ON v.id = d.id_venta
+JOIN producto p ON d.id_producto = p.id;
+
+SELECT * FROM vista_detalle_venta
+WHERE id_venta = '007';
+
