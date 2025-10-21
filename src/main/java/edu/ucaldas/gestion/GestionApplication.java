@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @RestController
 // 🚀 Prueba de Jenkins automática - 20 Oct 2025
+//prueba 2
 public class GestionApplication {
     public static void main(String[] args) {
       SpringApplication.run(GestionApplication.class, args);
